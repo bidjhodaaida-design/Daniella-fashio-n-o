@@ -1,46 +1,52 @@
-# DANIELLA FASHION
+# Cão Bem-Educado em Casa — Página de vendas
 
-Loja online demonstrativa para a marca DANIELLA FASHION. Interface em português, preços em MZN, catálogo de exemplo, filtros, pesquisa e carrinho com preparação de encomenda pelo WhatsApp.
+Página demonstrativa em React + Vite para um e-book de educação canina, dirigida ao mercado moçambicano. A interface está em português, usa preços ilustrativos em MZN e encaminha o pedido para WhatsApp depois de configurar o número.
 
-## Estado atual
+## Branch
 
-- [x] Página inicial responsiva
-- [x] Catálogo de demonstração e filtros por categoria
-- [x] Pesquisa de produtos
-- [x] Carrinho com alteração de quantidades e subtotal
-- [x] Fluxo de encomenda via WhatsApp preparado
-- [ ] Substituir os produtos e imagens de demonstração pelos produtos reais
-- [ ] Configurar o número real do WhatsApp em `src/App.jsx`
-- [ ] Configurar autenticação, base de dados e armazenamento de imagens
-- [ ] Construir painel administrativo seguro
-- [ ] Testar em telemóveis e publicar
+Este projeto foi preparado na branch `ebook-caes-mz`. A branch `main` mantém a loja DANIELLA FASHION sem alterações.
+
+## O que está incluído
+
+- Landing page responsiva para telemóvel e computador
+- Hero com chamada para ação
+- Benefícios do guia, secções de conteúdo e perguntas frequentes interativas
+- Oferta com preço demonstrativo de 350 MZN
+- CTA de WhatsApp com mensagem pré-preenchida
+- Avisos sobre o preço, entrega e resultados ainda precisarem de confirmação
+- Conteúdo educativo que favorece reforço positivo e não promete resultados garantidos
+
+## Antes de publicar
+
+1. Em `src/App.jsx`, substitui `258XXXXXXXXX` pelo WhatsApp real, apenas com dígitos e indicativo do país.
+2. Confirma o preço final, os capítulos que o e-book realmente contém, o método de pagamento e a forma de entrega.
+3. Substitui as fotografias de demonstração por imagens com direitos de uso confirmados.
+4. Revê o texto, a experiência em telemóvel e todos os links.
+5. Testa o fluxo de contacto antes de investir em anúncios.
 
 ## Executar localmente
 
-Requer Node.js instalado.
+Requer Node.js.
 
 ```bash
 npm install
 npm run dev
-```
-
-Para testar a compilação:
-
-```bash
 npm run build
 ```
 
-## Importar para Lovable
+## Usar no Lovable
 
-1. Abre o Lovable e cria um projeto.
-2. Liga a integração GitHub e importa este repositório.
-3. Pede ao Lovable para analisar a estrutura existente antes de alterar ficheiros.
-4. Configura Lovable Cloud ou Supabase para autenticação, produtos e imagens antes de considerar o painel administrativo pronto.
+A integração GitHub do Lovable cria um novo repositório; não liga diretamente um projeto Lovable ao repositório GitHub já existente. Para começar a partir deste código:
 
-## WhatsApp
+1. Abre este repositório no GitHub.
+2. Seleciona a branch `ebook-caes-mz` e confirma que estás a ver os ficheiros desta página, não a branch `main`.
+3. Transfere o código como ZIP a partir da branch `ebook-caes-mz` (GitHub → Code → Download ZIP).
+4. No Lovable, cria um projeto através da opção de importar/enviar código (Upload code) e envia o ZIP.
+5. Depois de o projeto ser importado, verifica a pré-visualização e pede ao Lovable para corrigir problemas sem mudar o objetivo da página.
+6. Se quiseres sincronização GitHub, liga a integração do Lovable depois da importação; será criado um novo repositório para esse projeto. Não escolhas a branch `main` da DANIELLA FASHION para este trabalho.
 
-No ficheiro `src/App.jsx`, substitui `258XXXXXXXXX` pelo número real da loja, usando indicativo do país e apenas dígitos. Não publiques credenciais secretas.
+A disponibilidade e o nome exato da opção de importação podem variar na interface do Lovable. Consulta a documentação oficial: https://docs.lovable.dev/integrations/github
 
-## Nota
+## Aviso
 
-Produtos, preços e fotografias são exemplos visuais, não inventário real. Confirmar disponibilidade, direitos de uso das imagens, preços, tamanhos e condições de entrega antes de publicar a loja. O projeto ainda não tem base de dados nem painel administrativo funcional.
+Esta é uma demonstração e não está configurada para receber pagamentos automaticamente. O botão de compra só abre WhatsApp depois de configurar um número válido. Não publiques o preço, os métodos de pagamento, a entrega ou qualquer alegação comercial antes de os confirmares.
