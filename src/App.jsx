@@ -1,159 +1,157 @@
-import { useMemo, useState } from 'react';
-import { ArrowDownRight, ArrowRight, Check, Menu, Minus, Plus, ShoppingBag, Sparkles, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { BookOpen, Bookmark, Check, ChevronLeft, ChevronRight, Clock3, Compass, Heart, LibraryBig, ListFilter, Moon, Search, Settings2, Sun, X } from 'lucide-react';
 
-const WHATSAPP_NUMBER = '258XXXXXXXXX'; // Substituir pelo número real da loja: indicativo 258 + número, sem +.
-const categories = ['Todos', 'Mulher', 'Homem', 'Conjuntos', 'Acessórios'];
-
-const initialProducts = [
-  { id: 1, name: 'Blazer Essential', category: 'Mulher', price: 1850, label: 'MAIS VENDIDO', image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=900&q=85', tone: 'Preto' },
-  { id: 2, name: 'Street Oversized', category: 'Homem', price: 1250, label: 'NOVO', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85', tone: 'Branco' },
-  { id: 3, name: 'Everyday Set', category: 'Conjuntos', price: 2200, label: '', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=85', tone: 'Neutro' },
-  { id: 4, name: 'Classic Jacket', category: 'Homem', price: 1950, label: 'ESCOLHA DA EQUIPA', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=900&q=85', tone: 'Castanho' },
-  { id: 5, name: 'Soft Knit', category: 'Mulher', price: 1450, label: '', image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=85', tone: 'Creme' },
-  { id: 6, name: 'Weekend Look', category: 'Conjuntos', price: 2600, label: 'LIMITADO', image: 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=900&q=85', tone: 'Casual' },
-  { id: 7, name: 'Minimal Tee', category: 'Homem', price: 850, label: '', image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=85', tone: 'Branco' },
-  { id: 8, name: 'City Bag', category: 'Acessórios', price: 1100, label: 'NOVO', image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=85', tone: 'Preto' }
+const stories = [
+  {
+    id: 'farol-azul', title: 'O Mistério do Farol Azul', category: 'Mistério', author: 'Adventure Reader Studio', language: 'Português', minutes: 8, color: 'blue',
+    description: 'Numa aldeia costeira, uma luz inesperada começa a piscar no velho farol abandonado. Três amigos decidem descobrir o que está por trás do sinal.',
+    chapters: [
+      { title: 'Uma luz no nevoeiro', text: 'O nevoeiro cobria a baía quando Lina viu a luz azul pela primeira vez. O farol estava fechado havia quase vinte anos, desde que a última tempestade destruíra a ponte de acesso.\n\n— Deve ser um reflexo — disse Tomás, tentando parecer tranquilo.\n\nMas a luz piscou três vezes, parou e voltou a brilhar. Lina anotou a hora no seu caderno. O avô sempre dizia que os sinais importantes se repetiam.\n\nNa manhã seguinte, os três amigos levaram uma lanterna, água e um mapa antigo até ao caminho da falésia. Não queriam entrar no farol sem cuidado; queriam primeiro perceber de onde vinha a luz.' },
+      { title: 'O mapa escondido', text: 'Perto da entrada encontraram uma pequena caixa de metal protegida por uma pedra solta. Dentro havia um mapa desenhado à mão e uma frase: “Procurem onde o mar guarda a memória”.\n\nTomás reconheceu o desenho: era a enseada das conchas, a zona onde os pescadores encontravam objectos trazidos pelas correntes. Os amigos decidiram voltar durante o dia e pedir ajuda à senhora Amélia, a antiga guardiã do farol.\n\nEla ouviu a história em silêncio. Depois sorriu: talvez o farol não estivesse a chamar alguém, mas a proteger algo que a aldeia tinha esquecido.' }
+    ]
+  },
+  {
+    id: 'ilha-perdida', title: 'A Expedição à Ilha Perdida', category: 'Exploração', author: 'Adventure Reader Studio', language: 'Português', minutes: 10, color: 'green',
+    description: 'Uma carta encontrada numa biblioteca leva uma pequena equipa a uma ilha que não aparece nos mapas modernos.',
+    chapters: [
+      { title: 'A carta antiga', text: 'A carta estava entre as páginas de um atlas gasto, numa biblioteca que cheirava a papel e madeira. O desenho mostrava uma ilha em forma de meia-lua e uma árvore enorme no centro.\n\nMara chamou o seu amigo Joel, que adorava mapas. Juntos compararam a carta com as correntes marítimas e perceberam que a ilha poderia estar escondida atrás de um recife.\n\nNão procuravam tesouros de ouro. Queriam descobrir por que motivo alguém apagaria uma ilha inteira dos mapas.' },
+      { title: 'Terra à vista', text: 'Ao nascer do sol, uma faixa verde surgiu no horizonte. A equipa reduziu a velocidade e aproximou-se com cautela. A praia estava coberta de conchas e marcas de aves, mas não havia edifícios nem sinais de visitantes recentes.\n\nNo interior, encontraram pedras dispostas em círculo e uma inscrição quase apagada. Mara fotografou os símbolos e decidiu que não tocariam em nada até compreenderem a história daquele lugar.' }
+    ]
+  },
+  {
+    id: 'comboio-noturno', title: 'O Segredo do Comboio Noturno', category: 'Investigação', author: 'Adventure Reader Studio', language: 'Português', minutes: 7, color: 'purple',
+    description: 'Durante uma viagem de madrugada, um bilhete misterioso muda o rumo de uma investigação.',
+    chapters: [
+      { title: 'O bilhete no assento', text: 'O comboio partiu às 23h40. Rui escolheu um lugar junto à janela e encontrou um envelope preso entre o assento e a parede. Não tinha nome, apenas uma hora e o desenho de uma chave.\n\nA revisora explicou que o comboio faria três paragens antes do amanhecer. Rui guardou o envelope e observou os passageiros sem tirar conclusões precipitadas.\n\nQuando abriu o bilhete sob a luz do corredor, leu: “A resposta está na última estação. Não confies no relógio da plataforma”.' },
+      { title: 'A última estação', text: 'Na última estação, todos os relógios marcavam horas diferentes. Rui percebeu que a pista não era sobre tempo, mas sobre perspectiva: um relógio antigo estava virado para o lado de dentro da sala de espera.\n\nAtrás dele havia um pequeno compartimento com uma carta destinada à directora do museu ferroviário. O mistério era afinal um pedido de ajuda para preservar os registos históricos da linha. Rui entregou a carta e a viagem terminou com uma nova pergunta: quem a tinha deixado no comboio?' }
+    ]
+  },
+  {
+    id: 'mapa-esquecido', title: 'O Mapa da Cidade Esquecida', category: 'Viagens', author: 'Adventure Reader Studio', language: 'Português', minutes: 9, color: 'amber',
+    description: 'Um mapa incompleto revela ruas antigas debaixo de uma cidade movimentada.',
+    chapters: [{ title: 'As ruas debaixo das ruas', text: 'Durante obras na praça central, apareceu uma placa de pedra com nomes de ruas que já não existiam. A estudante Inês copiou os nomes e procurou-os nos arquivos municipais.\n\nO mapa apontava para um antigo mercado coberto por construções mais recentes. Com a ajuda de uma arquivista, Inês descobriu que aquelas ruas eram parte do primeiro bairro da cidade.\n\nA descoberta não levou a uma câmara secreta, mas a algo mais valioso: histórias de famílias, ofícios e encontros que tinham moldado a cidade.' }]
+  },
+  {
+    id: 'montanha-dourada', title: 'O Enigma da Montanha Dourada', category: 'Aventura', author: 'Adventure Reader Studio', language: 'Português', minutes: 11, color: 'gold',
+    description: 'Dois irmãos seguem pistas geológicas para compreender o brilho estranho de uma montanha ao pôr do sol.',
+    chapters: [{ title: 'O brilho ao entardecer', text: 'A montanha parecia feita de ouro quando o sol tocava a encosta, mas o brilho desaparecia assim que a luz mudava. Sara e Dário levaram um caderno de campo e binóculos para observar o fenómeno.\n\nCom a orientação de uma geóloga, descobriram que certos minerais reflectiam a luz de uma forma invulgar. A pista verdadeira estava nas camadas de rocha, não numa lenda sobre riquezas escondidas.\n\nOs irmãos regressaram com fotografias e notas, orgulhosos por terem resolvido o enigma através da observação e da curiosidade.' }]
+  }
 ];
 
-const money = (value) => new Intl.NumberFormat('pt-MZ', { maximumFractionDigits: 0 }).format(value) + ' MZN';
+const categories = ['Todas', 'Mistério', 'Exploração', 'Viagens', 'Investigação', 'Aventura'];
+const coverClass = { blue: 'cover-blue', green: 'cover-green', purple: 'cover-purple', amber: 'cover-amber', gold: 'cover-gold' };
 
-function App() {
-  const [products] = useState(initialProducts);
-  const [category, setCategory] = useState('Todos');
-  const [search, setSearch] = useState('');
-  const [cart, setCart] = useState([]);
-  const [cartOpen, setCartOpen] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
-  const [notice, setNotice] = useState('');
+export default function App() {
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('Todas');
+  const [activeStory, setActiveStory] = useState(null);
+  const [chapterIndex, setChapterIndex] = useState(0);
+  const [favorites, setFavorites] = useState(() => JSON.parse(localStorage.getItem('ar-favorites') || '[]'));
+  const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem('ar-progress') || '{}'));
+  const [bookmarks, setBookmarks] = useState(() => JSON.parse(localStorage.getItem('ar-bookmarks') || '{}'));
+  const [theme, setTheme] = useState(() => localStorage.getItem('ar-theme') || 'light');
+  const [fontSize, setFontSize] = useState(18);
+  const [showSettings, setShowSettings] = useState(false);
+  const [view, setView] = useState('home');
 
-  const filteredProducts = useMemo(() => products.filter((product) => {
-    const matchesCategory = category === 'Todos' || product.category === category;
-    const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
-    return matchesCategory && matchesSearch;
-  }), [category, products, search]);
+  useEffect(() => { localStorage.setItem('ar-favorites', JSON.stringify(favorites)); }, [favorites]);
+  useEffect(() => { localStorage.setItem('ar-progress', JSON.stringify(progress)); }, [progress]);
+  useEffect(() => { localStorage.setItem('ar-bookmarks', JSON.stringify(bookmarks)); }, [bookmarks]);
+  useEffect(() => { localStorage.setItem('ar-theme', theme); }, [theme]);
 
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const filtered = useMemo(() => stories.filter(s =>
+    (category === 'Todas' || s.category === category) &&
+    (s.title + ' ' + s.description + ' ' + s.category).toLowerCase().includes(query.toLowerCase())
+  ), [query, category]);
 
-  function addToCart(product) {
-    setCart((current) => {
-      const found = current.find((item) => item.id === product.id);
-      return found
-        ? current.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)
-        : [...current, { ...product, quantity: 1, size: 'A confirmar' }];
-    });
-    setNotice(product.name + ' adicionado ao saco');
-    window.setTimeout(() => setNotice(''), 2200);
-  }
+  const openStory = (story, resume = false) => {
+    setActiveStory(story);
+    setChapterIndex(resume ? (progress[story.id]?.chapter || 0) : 0);
+    setView('reader');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  function changeQuantity(id, amount) {
-    setCart((current) => current.map((item) => item.id === id ? { ...item, quantity: item.quantity + amount } : item).filter((item) => item.quantity > 0));
-  }
+  const toggleFavorite = (id) => setFavorites(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const currentChapter = activeStory?.chapters[chapterIndex];
+  const saveProgress = (id, chapter) => setProgress(prev => ({ ...prev, [id]: { chapter, percent: Math.round(((chapter + 1) / activeStory.chapters.length) * 100), updated: Date.now() } }));
+  const toggleBookmark = () => setBookmarks(prev => {
+    const current = prev[activeStory.id] || [];
+    const key = String(chapterIndex);
+    return { ...prev, [activeStory.id]: current.includes(key) ? current.filter(x => x !== key) : [...current, key] };
+  });
 
-  function checkoutWhatsApp() {
-    if (!cart.length) return;
-    if (WHATSAPP_NUMBER.includes('X')) {
-      setNotice('Configura primeiro o número de WhatsApp da loja no ficheiro src/App.jsx');
-      window.setTimeout(() => setNotice(''), 3500);
-      return;
-    }
-    const lines = cart.map((item) => `• ${item.name} x${item.quantity} — ${money(item.price * item.quantity)}`);
-    const message = encodeURIComponent('Olá, DANIELLA FASHION! Gostaria de confirmar esta encomenda:\n\n' + lines.join('\n') + `\n\nSubtotal: ${money(total)}\n\nPodem confirmar disponibilidade, tamanhos e entrega?`);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank', 'noopener,noreferrer');
-  }
+  return <div className={`app-shell ${theme === 'dark' ? 'dark-mode' : ''}`}>
+    <header className="topbar">
+      <button className="brand" onClick={() => { setView('home'); setActiveStory(null); }} aria-label="Ir para início">
+        <span className="brand-mark"><BookOpen size={22}/></span><span><strong>Adventure</strong><small>READER</small></span>
+      </button>
+      <nav className="desktop-nav">
+        <button className={view === 'home' ? 'nav-active' : ''} onClick={() => { setView('home'); setActiveStory(null); }}>Início</button>
+        <button className={view === 'library' ? 'nav-active' : ''} onClick={() => { setView('library'); setActiveStory(null); }}>Biblioteca</button>
+        <button className={view === 'favorites' ? 'nav-active' : ''} onClick={() => { setView('favorites'); setActiveStory(null); }}>Favoritos</button>
+      </nav>
+      <div className="top-actions">
+        <button className="icon-btn" title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={19}/> : <Moon size={19}/>}</button>
+        <button className="icon-btn" title="Definições de leitura" onClick={() => setShowSettings(v => !v)}><Settings2 size={19}/></button>
+      </div>
+    </header>
 
-  return (
-    <div className="site-shell">
-      <div className="announcement">ESTILO QUE FALA POR TI <span>✦</span> ENCOMENDAS PELO WHATSAPP</div>
-      <header className="header">
-        <button className="icon-button mobile-toggle" aria-label="Abrir menu" onClick={() => setMobileMenu(!mobileMenu)}>{mobileMenu ? <X size={22} /> : <Menu size={22} />}</button>
-        <a href="#inicio" className="wordmark" aria-label="Daniella Fashion início">DANIELLA<span>FASHION</span></a>
-        <nav className={mobileMenu ? 'nav nav-open' : 'nav'}>
-          <a href="#inicio" onClick={() => setMobileMenu(false)}>Início</a>
-          <a href="#colecao" onClick={() => setMobileMenu(false)}>Coleção</a>
-          <a href="#historia" onClick={() => setMobileMenu(false)}>A nossa essência</a>
-          <a href="#contacto" onClick={() => setMobileMenu(false)}>Contacto</a>
-        </nav>
-        <button className="cart-button" onClick={() => setCartOpen(true)} aria-label={`Abrir saco, ${cartCount} artigos`}>
-          <ShoppingBag size={19} /><span className="cart-label">O teu saco</span><span className="cart-count">{cartCount}</span>
-        </button>
-      </header>
+    {showSettings && <div className="settings-popover">
+      <div className="settings-head"><strong>Definições de leitura</strong><button className="icon-btn" onClick={() => setShowSettings(false)}><X size={16}/></button></div>
+      <label>Tamanho do texto <b>{fontSize}px</b></label>
+      <input type="range" min="15" max="25" value={fontSize} onChange={e => setFontSize(Number(e.target.value))}/>
+      <p>As tuas preferências ficam guardadas neste dispositivo.</p>
+    </div>}
 
-      <main>
-        <section className="hero" id="inicio">
-          <img className="hero-image" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=2000&q=90" alt="Inspiração de moda urbana e contemporânea" />
-          <div className="hero-shade" />
-          <div className="hero-content">
-            <p className="eyebrow light"><Sparkles size={14} /> A TUA NOVA FORMA DE EXPRESSAR</p>
-            <h1>Veste a tua<br /><em>essência.</em></h1>
-            <p className="hero-copy">Peças escolhidas para quem cria o próprio caminho. O teu estilo, as tuas regras.</p>
-            <a href="#colecao" className="button button-light">EXPLORAR COLEÇÃO <ArrowDownRight size={17} /></a>
-            <div className="hero-note"><span className="note-line" /> COLEÇÃO DE ESTREIA · 2026</div>
+    {view === 'reader' && activeStory ? <main className="reader-page">
+      <button className="back-link" onClick={() => { setView('library'); setActiveStory(null); }}><ChevronLeft size={18}/> Voltar à biblioteca</button>
+      <div className="reader-toolbar">
+        <div><span className="eyebrow">{activeStory.category} · {activeStory.minutes} min de leitura</span><h1>{activeStory.title}</h1></div>
+        <button className={favorites.includes(activeStory.id) ? 'favorite-btn selected' : 'favorite-btn'} onClick={() => toggleFavorite(activeStory.id)}><Heart size={18} fill={favorites.includes(activeStory.id) ? 'currentColor' : 'none'}/>{favorites.includes(activeStory.id) ? 'Guardado' : 'Favoritar'}</button>
+      </div>
+      <div className="progress-track"><span style={{width: `${Math.round(((chapterIndex + 1) / activeStory.chapters.length) * 100)}%`}}/></div>
+      <div className="reader-layout">
+        <aside className="chapter-list"><strong>Capítulos</strong>{activeStory.chapters.map((ch, i) => <button key={ch.title} className={i === chapterIndex ? 'chapter-active' : ''} onClick={() => { setChapterIndex(i); saveProgress(activeStory.id, i); }}>{String(i + 1).padStart(2, '0')} <span>{ch.title}</span>{(bookmarks[activeStory.id] || []).includes(String(i)) && <Bookmark size={14} fill="currentColor"/>}</button>)}</aside>
+        <article className="reading-paper">
+          <div className="reading-meta">CAPÍTULO {String(chapterIndex + 1).padStart(2, '0')} DE {String(activeStory.chapters.length).padStart(2, '0')}</div>
+          <h2>{currentChapter.title}</h2>
+          <div className="story-text" style={{fontSize: `${fontSize}px`}}>{currentChapter.text.split('\n\n').map((p, i) => <p key={i}>{p}</p>)}</div>
+          <div className="reader-bottom">
+            <button className="secondary-btn" disabled={chapterIndex === 0} onClick={() => { const n = chapterIndex - 1; setChapterIndex(n); saveProgress(activeStory.id, n); }}><ChevronLeft size={17}/> Anterior</button>
+            <button className={((bookmarks[activeStory.id] || []).includes(String(chapterIndex))) ? 'bookmark-btn active' : 'bookmark-btn'} onClick={toggleBookmark}><Bookmark size={17}/> {((bookmarks[activeStory.id] || []).includes(String(chapterIndex))) ? 'Remover marcador' : 'Marcar capítulo'}</button>
+            <button className="primary-btn" disabled={chapterIndex === activeStory.chapters.length - 1} onClick={() => { const n = chapterIndex + 1; setChapterIndex(n); saveProgress(activeStory.id, n); }} >Próximo <ChevronRight size={17}/></button>
           </div>
-          <div className="hero-index">01 / 03</div>
-        </section>
+          {chapterIndex === activeStory.chapters.length - 1 && <div className="finished-note"><Check size={18}/> Chegaste ao último capítulo desta história de demonstração.</div>}
+        </article>
+      </div>
+    </main> : <main>
+      {view === 'home' && <section className="hero">
+        <div className="hero-copy"><span className="eyebrow"><Compass size={15}/> UM MUNDO DE DESCOBERTAS</span><h1>Grandes aventuras.<br/><em>Novos mundos.</em></h1><p>Descobre histórias de mistério, exploração e coragem. Lê ao teu ritmo e continua sempre de onde paraste.</p>
+          <button className="primary-btn hero-button" onClick={() => setView('library')}>Explorar biblioteca <ChevronRight size={18}/></button>
+          <div className="hero-stats"><span><strong>{stories.length}</strong> histórias de demonstração</span><span><strong>100%</strong> originais</span></div>
+        </div>
+        <div className="hero-art"><div className="sun-disc"/><div className="mountain mountain-back"/><div className="mountain mountain-front"/><div className="hero-book"><BookOpen size={45}/><span>ABRE A<br/>PRÓXIMA<br/>AVENTURA</span></div><span className="floating-star star-one">✦</span><span className="floating-star star-two">✧</span></div>
+      </section>}
 
-        <section className="intro-strip" id="historia">
-          <p>MENOS RUÍDO. <span>MAIS IDENTIDADE.</span></p>
-          <p className="intro-small">Moda para o teu dia a dia, com atitude e intenção.</p>
-        </section>
+      {view === 'home' && <section className="resume-section">
+        <div className="section-heading"><div><span className="eyebrow">A TUA JORNADA</span><h2>Continuar a ler</h2></div><button className="text-link" onClick={() => setView('library')}>Ver biblioteca <ChevronRight size={16}/></button></div>
+        {Object.keys(progress).length ? <div className="resume-row">{stories.filter(s => progress[s.id]).map(s => <button className="resume-card" key={s.id} onClick={() => openStory(s, true)}><span className={`mini-cover ${coverClass[s.color]}`}><BookOpen size={24}/></span><span className="resume-info"><strong>{s.title}</strong><small>Capítulo {(progress[s.id].chapter || 0) + 1} · {progress[s.id].percent || 0}% lido</small><span className="mini-progress"><i style={{width: `${progress[s.id].percent || 0}%`}}/></span></span><ChevronRight size={18}/></button>)}</div> : <div className="empty-resume"><span className="empty-icon"><BookOpen size={22}/></span><div><strong>A tua próxima aventura começa aqui</strong><p>Abre uma história e o teu progresso aparecerá nesta área.</p></div><button className="text-link" onClick={() => setView('library')}>Escolher história <ChevronRight size={16}/></button></div>}
+      </section>}
 
-        <section className="collection section-wrap" id="colecao">
-          <div className="section-heading">
-            <div><p className="eyebrow">ESCOLHE O TEU LOOK</p><h2>Feito para <em>destacar.</em></h2></div>
-            <p className="section-aside">Descobre essenciais que combinam contigo — do casual ao inesquecível.</p>
-          </div>
-          <div className="collection-tools">
-            <div className="filters" aria-label="Filtrar por categoria">
-              {categories.map((item) => <button key={item} className={category === item ? 'filter active' : 'filter'} onClick={() => setCategory(item)}>{item}</button>)}
-            </div>
-            <input className="search-input" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Procurar peça..." aria-label="Procurar produto" />
-          </div>
-          <div className="product-grid">
-            {filteredProducts.map((product, index) => (
-              <article className="product-card" key={product.id}>
-                <div className="product-image-wrap">
-                  <img src={product.image} alt={product.name} loading="lazy" />
-                  {product.label && <span className="product-label">{product.label}</span>}
-                  <button className="quick-add" onClick={() => addToCart(product)} aria-label={`Adicionar ${product.name} ao saco`}><Plus size={19} /></button>
-                </div>
-                <div className="product-meta"><span>{product.category}</span><span>{String(index + 1).padStart(2, '0')}</span></div>
-                <div className="product-bottom"><div><h3>{product.name}</h3><p className="product-tone">{product.tone}</p></div><strong>{money(product.price)}</strong></div>
-              </article>
-            ))}
-            {!filteredProducts.length && <p className="empty-state">Não encontrámos produtos com esses critérios.</p>}
-          </div>
-          <p className="demo-note">Os artigos, preços e imagens apresentados são exemplos de demonstração e devem ser confirmados antes da publicação.</p>
-        </section>
+      <section className="library-section">
+        <div className="section-heading"><div><span className="eyebrow">{view === 'favorites' ? 'A TUA COLEÇÃO' : 'ESCOLHE O TEU PRÓXIMO DESTINO'}</span><h2>{view === 'favorites' ? 'As tuas favoritas' : view === 'library' ? 'Biblioteca de aventuras' : 'Histórias para descobrir'}</h2></div><span className="story-count">{(view === 'favorites' ? filtered.filter(s => favorites.includes(s.id)) : filtered).length} histórias</span></div>
+        <div className="search-row"><div className="search-box"><Search size={19}/><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Pesquisar por título, tema ou palavra..."/>{query && <button className="icon-btn" onClick={() => setQuery('')}><X size={16}/></button>}</div><span className="filter-label"><ListFilter size={16}/> Filtrar por</span></div>
+        <div className="category-pills">{categories.map(c => <button key={c} className={category === c ? 'pill-active' : ''} onClick={() => setCategory(c)}>{c}</button>)}</div>
+        <div className="story-grid">{(view === 'favorites' ? filtered.filter(s => favorites.includes(s.id)) : filtered).map((story, i) => <article className="story-card" key={story.id}>
+          <button className={favorites.includes(story.id) ? 'heart-float is-favorite' : 'heart-float'} aria-label="Adicionar aos favoritos" onClick={() => toggleFavorite(story.id)}><Heart size={18} fill={favorites.includes(story.id) ? 'currentColor' : 'none'}/></button>
+          <button className={`story-cover ${coverClass[story.color]}`} onClick={() => openStory(story)} aria-label={`Ler ${story.title}`}><span className="cover-number">AVENTURA Nº {String(i + 1).padStart(2, '0')}</span><span className="cover-symbol">{story.color === 'blue' ? '✦' : story.color === 'green' ? '⌁' : story.color === 'purple' ? '◈' : story.color === 'amber' ? '⌖' : '✧'}</span><strong>{story.title}</strong><span className="cover-footer">ADVENTURE READER · HISTÓRIA ORIGINAL</span></button>
+          <div className="story-card-body"><div className="story-meta"><span>{story.category}</span><span><Clock3 size={13}/>{story.minutes} min</span></div><h3>{story.title}</h3><p>{story.description}</p><button className="read-link" onClick={() => openStory(story)}><BookOpen size={16}/> Começar a ler <ChevronRight size={16}/></button></div>
+        </article>)}</div>
+        {((view === 'favorites' && !filtered.some(s => favorites.includes(s.id))) || (view !== 'favorites' && !filtered.length)) && <div className="no-results"><Search size={28}/><strong>Não encontrámos histórias</strong><p>Tenta outra palavra ou escolhe uma categoria diferente.</p><button className="secondary-btn" onClick={() => { setQuery(''); setCategory('Todas'); }}>Limpar filtros</button></div>}
+      </section>
+    </main>}
 
-        <section className="editorial">
-          <div className="editorial-image"><img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=1200&q=85" alt="Detalhe editorial de moda" loading="lazy" /></div>
-          <div className="editorial-copy"><p className="eyebrow">A NOSSA ESSÊNCIA</p><h2>Não sigas o estilo.<br /><em>Define-o.</em></h2><p>A DANIELLA FASHION nasce para celebrar a individualidade. Escolhe peças que acompanham o teu ritmo e contam a tua história.</p><a href="#colecao" className="text-link">ENCONTRA O TEU LOOK <ArrowRight size={17} /></a></div>
-        </section>
-
-        <section className="values section-wrap">
-          <div><span>01</span><h3>Estilo com intenção</h3><p>Escolhas versáteis para combinares à tua maneira.</p></div>
-          <div><span>02</span><h3>Compra simples</h3><p>Envia a tua seleção e confirma a encomenda pelo WhatsApp.</p></div>
-          <div><span>03</span><h3>Feito para ti</h3><p>Contacta-nos para confirmar tamanhos, disponibilidade e entrega.</p></div>
-        </section>
-      </main>
-
-      <footer className="footer" id="contacto">
-        <div className="footer-top"><a href="#inicio" className="wordmark footer-mark">DANIELLA<span>FASHION</span></a><p>O teu estilo. A tua identidade.</p><a className="footer-link" href="#colecao">COMPRAR A COLEÇÃO <ArrowRight size={15} /></a></div>
-        <div className="footer-bottom"><span>© 2026 DANIELLA FASHION</span><span>MOÇAMBIQUE · PREÇOS EM MZN</span><span>FEITO COM IDENTIDADE.</span></div>
-      </footer>
-
-      {notice && <div className="toast" role="status"><Check size={17} />{notice}</div>}
-
-      {cartOpen && <div className="drawer-backdrop" onClick={() => setCartOpen(false)}>
-        <aside className="cart-drawer" onClick={(event) => event.stopPropagation()} aria-label="O teu saco">
-          <div className="drawer-header"><div><p className="eyebrow">A TUA SELEÇÃO</p><h2>O teu saco <span>({cartCount})</span></h2></div><button className="icon-button" onClick={() => setCartOpen(false)} aria-label="Fechar saco"><X /></button></div>
-          {!cart.length ? <div className="cart-empty"><ShoppingBag size={35} /><h3>Ainda está vazio.</h3><p>Descobre as peças que combinam contigo.</p><button className="button button-dark" onClick={() => { setCartOpen(false); document.getElementById('colecao')?.scrollIntoView({ behavior: 'smooth' }); }}>EXPLORAR COLEÇÃO</button></div> :
-            <><div className="cart-items">{cart.map((item) => <div className="cart-item" key={item.id}><img src={item.image} alt="" /><div className="cart-item-info"><h3>{item.name}</h3><p>{money(item.price)}</p><div className="quantity"><button onClick={() => changeQuantity(item.id, -1)} aria-label="Diminuir quantidade"><Minus size={14} /></button><span>{item.quantity}</span><button onClick={() => changeQuantity(item.id, 1)} aria-label="Aumentar quantidade"><Plus size={14} /></button></div></div><strong>{money(item.price * item.quantity)}</strong></div>)}</div><div className="drawer-total"><div><span>Subtotal</span><strong>{money(total)}</strong></div><p>Entrega e disponibilidade serão confirmadas pela loja.</p><button className="button button-dark checkout-button" onClick={checkoutWhatsApp}>ENCOMENDAR PELO WHATSAPP <ArrowRight size={17} /></button></div></>}
-        </aside>
-      </div>}
-    </div>
-  );
+    <footer className="footer"><div className="footer-brand"><span className="brand-mark"><BookOpen size={20}/></span><strong>Adventure Reader</strong></div><p>Um lugar tranquilo para ler, imaginar e descobrir.</p><small>Conteúdo de demonstração original. Esta aplicação não é afiliada nem patrocinada pelos titulares de Tintin.</small></footer>
+    <nav className="mobile-nav"><button className={view === 'home' ? 'mobile-active' : ''} onClick={() => { setView('home'); setActiveStory(null); }}><Compass size={19}/>Início</button><button className={view === 'library' || view === 'reader' ? 'mobile-active' : ''} onClick={() => { setView('library'); setActiveStory(null); }}><LibraryBig size={19}/>Biblioteca</button><button className={view === 'favorites' ? 'mobile-active' : ''} onClick={() => { setView('favorites'); setActiveStory(null); }}><Heart size={19}/>Favoritos</button></nav>
+  </div>;
 }
-
-export default App;
